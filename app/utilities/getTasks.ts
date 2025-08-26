@@ -1,8 +1,8 @@
 import { Task } from "../types/types"
 
-export default async function addNewTask(): Promise<Task[] | null> {
+export default async function getTasks(): Promise<Task[] | null> {
     try {
-        const response = await fetch('http://localhost:3001/tasks', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/tasks`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -10,14 +10,15 @@ export default async function addNewTask(): Promise<Task[] | null> {
         })
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`)
+            console.error(`Error fetching tasks: ${response.status}`)
+            return null
         }
 
         const tasks = await response.json()
-        console.log('Task created successfully:', tasks)
+       
         return tasks
     } catch (error) {
-        console.error('Error creating task:', error)
+        console.error(`Error fetching tasks: ${error}`)
         return null
     }
 }

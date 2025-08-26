@@ -15,7 +15,7 @@ export default function Home() {
       const fetchedTasks = await getTasks()
       if (fetchedTasks) {
         setTasks(fetchedTasks)
-      }
+      } 
     }
     fetchTasks()
   }, [])

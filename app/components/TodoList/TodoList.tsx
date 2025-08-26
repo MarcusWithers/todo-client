@@ -75,7 +75,7 @@ export const TodoList = () => {
 
     return (
         <div className='TodoList relative max-w-[736px] mx-auto px-4'>
-            <div className='absolute -top-28 left-0 w-full'>
+            <div className='absolute -top-28 left-0 w-full px-4'>
                 <button className='w-full bg-blue-500 text-gray-100 rounded-lg p-4 flex justify-center items-center gap-2 hover:cursor-pointer' onClick={handleCreateTaskClick}>
                     Create Task 
                     <Image src='/Plus.svg' alt='Plus icon' width={16} height={16} />
@@ -95,7 +95,6 @@ export const TodoList = () => {
                         <span className='text-gray-200 font-bold text-xs'>{countCompletedTasks()} of {tasks.length}</span>
                     </div>
                 </div>
-
             </div>
 
             <div className='flex flex-col gap-3 mt-5'>
@@ -109,22 +108,23 @@ export const TodoList = () => {
                     />
                 ))}
             
-            {tasks.length === 0 && (
-                <div className='flex flex-col justify-center items-center mt-2 border-t pt-16 border-t-[#333333] rounded-md'>
-                    <Image src="/Clipboard.svg" alt="Clipboard" width={56} height={56} />
-                    <div>
-                        <p className='text-[#808080] font-bold mt-4 text-center'>You have no tasks registered</p>
-                        <p className='text-[#808080] text-center mt-3'>Create tasks and organize your to-do items</p>
+                {tasks.length === 0 && (
+                    <div className='flex flex-col justify-center items-center mt-2 border-t pt-16 border-t-[#333333] rounded-md'>
+                        <Image src="/Clipboard.svg" alt="Clipboard" width={56} height={56} />
+                        <div>
+                            <p className='text-[#808080] font-bold mt-4 text-center'>You have no tasks registered</p>
+                            <p className='text-[#808080] text-center mt-3'>Create tasks and organize your to-do items</p>
+                        </div>
                     </div>
-                </div>
-            )}
-            {showDeleteModal && (
-                <DeleteTaskModal 
-                    onConfirm={handleConfirmDelete} 
-                    onCancel={handleCancelDelete} 
-                    task={taskToDelete}
-                />
-            )}
+                )}
+
+                {showDeleteModal && (
+                    <DeleteTaskModal 
+                        onConfirm={handleConfirmDelete} 
+                        onCancel={handleCancelDelete} 
+                        task={taskToDelete}
+                    />
+                )}
             </div>
         </div>
     )

@@ -10,21 +10,20 @@ type Props = {
 
 export const Task = (props: Props) => {
     return (
-        <button
+        <div
             role="button"
             tabIndex={0}
-            className='flex justify-between items-center bg-[#262626] p-4 rounded-lg border-[#2f2f2f] hover:cursor-pointer'
+            className='flex justify-between items-center break-words break-all bg-[#262626] p-4 rounded-lg border-[#2f2f2f] hover:cursor-pointer'
             key={props.task.id}
             onClick={() => {props.onClick(props.task)}}
-            type='button'
         >
-            <div className='flex items-center gap-3'>
+            <div className='flex items-start gap-3 flex-1 min-w-0'>
                 {(() => {
                     const borderColor = props.task.color ? Colors[props.task.color] : Colors.BLUE
                     const backgroundColor = props.task.completed ? borderColor : 'transparent'
                     return (
                         <div
-                            className='h-[24px] w-[24px] flex items-center justify-center hover:cursor-pointer focus:outline-none'
+                            className='h-[24px] w-[24px] flex items-center justify-center hover:cursor-pointer focus:outline-none flex-shrink-0'
                             aria-label={props.task.completed ? 'Mark as incomplete' : 'Mark as complete'}
                             onClick={e => { e.stopPropagation(); props.onToggleCompleted(props.task) }}
                             role='button'
@@ -34,7 +33,7 @@ export const Task = (props: Props) => {
                                 style={{ borderColor, backgroundColor }}
                             >
                                 {props.task.completed && (
-                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <svg width="14" height="14" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M3 6.5L5.5 9L9 4" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
                                 )}
@@ -42,13 +41,13 @@ export const Task = (props: Props) => {
                         </div>
                     )
                 })()}
-                <p className={`text-gray-50 ${props.task.completed ? ' line-through opacity-60' : ''}`} key={props.task.id}>{props.task.title}</p>
+                <p className={`text-gray-50 text-left flex-1 min-w-0 break-words ${props.task.completed ? ' line-through opacity-60' : ''}`} key={props.task.id}>{props.task.title}</p>
             </div>
-            <div className='h[24px] w[24px]'>
-                <div role='button' className='hover:cursor-pointer' onClick={(e) => props.onDelete(e, props.task)}>
+            <div className='flex-shrink-0 ml-2 flex items-center'>
+                <button type='button' className='flex items-center justify-center hover:cursor-pointer h-[24px] w-[24px]' onClick={(e) => props.onDelete(e, props.task)}>
                     <Image src='/Trash.svg' alt='Trash icon' width={16} height={16} /> 
-                </div>
+                </button>
             </div>
-        </button>
+        </div>
     )
 }

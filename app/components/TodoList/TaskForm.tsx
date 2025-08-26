@@ -2,21 +2,44 @@
 
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
-import { useTaskStore } from "../../store/taskStore"
+import { useEffect, useState } from "react"
 import { ColorName, Colors, Routes, Task } from "../../types/types"
-import addNewTask from "../../utilities/addNewTask"
 
-export const TaskForm = () => {
+interface TaskFormProps {
+    initialTask?: Partial<Task>
+    onSubmit: (task: Task) => Promise<boolean>
+    submitButtonText: string
+    submittingText: string
+    submitIcon?: React.ReactNode
+    onBack?: () => void
+}
 
+export const TaskForm = ({ 
+    initialTask, 
+    onSubmit, 
+    submitButtonText, 
+    submittingText, 
+    submitIcon,
+    onBack 
+}: TaskFormProps) => {
     const router = useRouter()
-    const [selectedColor, setSelectedColor] = useState<ColorName>()
-    const [title, setTitle] = useState<string>('')
+    const [selectedColor, setSelectedColor] = useState<ColorName>(initialTask?.color || "RED")
+    const [title, setTitle] = useState<string>(initialTask?.title || '')
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
-    const addTaskToStore = useTaskStore((state) => state.addTask)
+
+    useEffect(() => {
+        if (initialTask) {
+            setTitle(initialTask.title || '')
+            setSelectedColor(initialTask.color || "RED")
+        }
+    }, [initialTask])
 
     const handleBackClick = () => {
-        router.push(Routes.HOME)
+        if (onBack) {
+            onBack()
+        } else {
+            router.push(Routes.HOME)
+        }
     }
 
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,16 +51,19 @@ export const TaskForm = () => {
         setIsSubmitting(true)
 
         const task: Task = {
+            id: initialTask?.id,
             title,
             color: selectedColor 
         }
-        const result = await addNewTask(task)
+
+        const result = await onSubmit(task)
+
         if (result) {
-            addTaskToStore(result)
             router.push(Routes.HOME)
         } else {
-            console.error('Failed to create task')
+            console.error('Failed to submit task')
         }
+
         setIsSubmitting(false)
     }
 
@@ -59,7 +85,9 @@ export const TaskForm = () => {
                         onChange={handleTitleChange}
                         type="text" 
                         id="title"  
-                        placeholder="Ex. Brush your teeth" 
+                        value={title}
+                        placeholder="Ex. Brush your teeth"
+                        required 
                     />
                 </div>
 
@@ -70,7 +98,9 @@ export const TaskForm = () => {
                             <button
                                 key={colorName}
                                 type="button"
-                                className={`w-[52px] h-[52px] rounded-full border-2 flex-shrink-0 focus:outline-none transition-all duration-150 hover:cursor-pointer ${selectedColor === colorName ? 'border-gray-300' : ''}`}
+                                className={`w-[52px] h-[52px] rounded-full border-2 flex-shrink-0 focus:outline-none transition-all duration-150 hover:cursor-pointer 
+                                    ${selectedColor === colorName ? 'border-gray-300' : ''}`
+                                }
                                 style={{ backgroundColor: Colors[colorName] }}
                                 aria-label={colorName}
                                 onClick={() => setSelectedColor(colorName)}
@@ -80,12 +110,14 @@ export const TaskForm = () => {
                 </div>
                 
                 <button 
-                    className={`w-full bg-blue-500 text-gray-100 rounded-lg p-4 flex justify-center items-center gap-2 ${(title.length === 0 || selectedColor === undefined || isSubmitting) ? 'opacity-50 cursor-not-allowed' : 'hover:cursor-pointer'}`}
+                    className={`w-full bg-blue-500 text-gray-100 rounded-lg p-4 flex justify-center items-center gap-2 mt-5
+                        ${(title.length === 0 || selectedColor === undefined || isSubmitting) ? 'opacity-50 cursor-not-allowed' : 'hover:cursor-pointer'}`
+                    }
                     type='submit' 
                     disabled={title.length === 0 || selectedColor === undefined || isSubmitting}
                 >
-                    {isSubmitting ? 'Creating Task...' : 'Add Task'}
-                    {!isSubmitting && <Image src='/Plus.svg' alt='Plus icon' width={16} height={16} />}
+                    {isSubmitting ? submittingText : submitButtonText}
+                    {!isSubmitting && submitIcon}
                 </button>
             </form>
         </div>

@@ -2,7 +2,7 @@ import { Task } from "../types/types"
 
 export default async function updateTask(task: Task): Promise<Task | null> {
     try {
-        const response = await fetch(`http://localhost:3001/tasks/${task.id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/tasks/${task.id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -15,14 +15,14 @@ export default async function updateTask(task: Task): Promise<Task | null> {
         })
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`)
+            throw new Error(`Error updating task: ${response.status}`)
         }
 
-        const newTask = await response.json()
-        console.log('Task updated successfully:', newTask)
-        return newTask
+        const updatedTask = await response.json()
+
+        return updatedTask
     } catch (error) {
-        console.error('Error updated task:', error)
+        console.error('Error updating task:', error)
         return null
     }
 }
